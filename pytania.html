@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Test - zamknięte</title>
+		<style>
+			.main{
+				text-align: center;
+				width: 70%; 
+				margin: 0 auto; 
+				background-color: #f0f8ff;
+				border: 1px solid;
+				height: 100%;
+			}
+			.questions{
+				text-align: left;
+				width: 50%;
+				height: 150px;
+				margin: 0 auto;
+				border: 1;
+			}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<script type="text/javascript" charset="utf-8" src="pytania.js"></script>
+		<script type="text/javascript" charset="utf-8">
+			alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+			num_q = 0;
+			var q;
+			var ran;
+			$( document ).ready(function() {
+				function setupQuestion( n ){
+					$( "#msg" ).text( "" );
+					if( n == 1 ) {
+						ran++;
+						if( ran > Questions.length) ran = 0;
+					}
+					else if( n == 2 ){
+						ran--;
+						if( ran < 0 ) ran = 0;					
+					}
+					else
+						ran = Math.floor(Math.random()*Questions.length);
+						
+					q = Questions[ ran ];
+					
+					$( "#question" ).html( ran+1 + '. ' + q[ "question" ] );
+					$( ".questions" ).empty();
+					answers = shuffle( q[ "answers" ] );
+					num_q = answers.length;
+					for( var i = 0; i < num_q;i++ ){
+						$( ".questions" ).append( "<div><input id=\"question-" + (i) + "\" type=\"checkbox\" right=\"" + answers[ i ][1] + "\"value=\"" + (i) + "\" /> \
+							<label for=\"question-" + (i) + "\">" + alphabet[ i ] + ") " + answers[i][0] + "</label></div>" );
+					}
+				}
+				setupQuestion( 0 );
+				
+				$( "#new" ).click(function() {
+				  setupQuestion( 0 );
+				});
+				$( "#ans" ).click(function() {
+					for( var i = 0;i < num_q;i++ ){
+						var h = "#question-"+i;
+						if( $( h ).attr( 'right' ) == 1 ) $( h ).parent().css( "background-color", "green" );
+					}
+				});
+				$( "#next" ).click(function() {
+					setupQuestion( 1 );
+				});			
+				$( "#prev" ).click(function() {
+					setupQuestion( 2 );
+				});				
+				$( "#check" ).click(function() {
+					good = 0;
+					r = 0;
+					for( var i = 0;i < num_q;i++ ){
+						var h = "#question-"+i;
+						if( $( h ).attr( 'right' ) == 1 ) good++;
+						
+						if( $( h ).is(":checked") ){
+							if( $( h ).attr( 'right' ) == 1 )r++;
+							else r--;
+						}
+					}
+					
+					if( good!=r ) $( "#msg" ).text( "Źle!" );
+					else $( "#msg" ).text( "Dobrze!" );
+				});
+				
+			} );
+			
+		</script>
+	</head>
+	<body>
+		<div class="main">
+			<h3 id="question"></h3>
+			<div class="questions">
+			</div>
+			<button id="prev"><<</button>				
+			<button id="check">Sprawdź</button>
+			<button id="new">Nowe pytanie</button>
+			<button id="ans">Pokaż odpowiedź</button>		
+			<button id="next">>></button><br \>		
+			<span id="msg"></span>
+		</div>
+	</body>
+</html>		
